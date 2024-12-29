@@ -2,10 +2,12 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_ainul_muhlasin/shared/utils/global_context.dart';
 import 'package:sims_ppob_ainul_muhlasin/routes/routes.dart';
 import 'package:sizer/sizer.dart';
 
+import 'core/constants/app_configuration.dart';
 import 'initializer.dart';
 import 'shared/style/app_theme.dart';
 

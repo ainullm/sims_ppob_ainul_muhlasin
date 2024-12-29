@@ -12,11 +12,13 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigation = Provider.of<NavigationController>(context);
-
-    if (navigation.currentPage == 0) {
-      navigation.navigateToNext(context);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navigation =
+          Provider.of<NavigationController>(context, listen: false);
+      if (navigation.currentPage == 0) {
+        navigation.navigateToNext(context);
+      }
+    });
 
     return Scaffold(
       body: Center(

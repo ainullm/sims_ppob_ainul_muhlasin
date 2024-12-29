@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sims_ppob_ainul_muhlasin/shared/style/app_colors.dart';
 import 'package:sims_ppob_ainul_muhlasin/shared/utils/currency_format.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../../shared/components/app_bar.dart';
 import '../../../shared/components/saldo_card.dart';
@@ -27,7 +28,7 @@ class TransactionViews extends StatelessWidget {
         centerTitle: true,
       ),
       floatingActionButton: Visibility(
-        visible: controllerTransaction.showFab,
+        visible: true,
         child: FloatingActionButton(
           onPressed: controllerTransaction.scrollToTop,
           backgroundColor: AppColors.white,
@@ -57,10 +58,15 @@ class TransactionViews extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Transaction History',
-                  style: AppStyle.subtitle4.copyWith(
-                    fontWeight: FontWeight.w600,
+                GestureDetector(
+                  onTap: () {
+                    log('Scroll Offset: ${controllerTransaction.scrollController.offset}');
+                  },
+                  child: Text(
+                    'Transaction History',
+                    style: AppStyle.subtitle4.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -134,10 +140,16 @@ class TransactionViews extends StatelessWidget {
                               ],
                             ),
                             const Spacer(),
-                            Text(
-                              transaction.description ?? '',
-                              style: AppStyle.body2.copyWith(
-                                fontWeight: FontWeight.w600,
+                            SizedBox(
+                              width: 22.w,
+                              child: Text(
+                                maxLines: 1,
+                                textAlign: TextAlign.end,
+                                overflow: TextOverflow.ellipsis,
+                                transaction.transactionType ?? '',
+                                style: AppStyle.body2.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],

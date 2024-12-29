@@ -3,6 +3,7 @@ import 'package:sims_ppob_ainul_muhlasin/modules/views/auth/login_view.dart';
 import 'package:sims_ppob_ainul_muhlasin/modules/views/auth/register_view.dart';
 
 import '../modules/views/navigation/navigation_view.dart';
+import '../modules/views/profile/profile_edit_view.dart';
 import '../modules/views/splash/splash_view.dart';
 import '../modules/views/transaction/payment_transaction_view.dart';
 
@@ -12,6 +13,7 @@ class AppRoutes {
   static const String registrasi = '/registrasi';
   static const String navigation = '/navigation';
   static const String payment = '/payment';
+  static const String profileEdit = '/profile-edit';
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashView(),
@@ -19,6 +21,7 @@ class AppRoutes {
     registrasi: (context) => const RegisterView(),
     navigation: (context) => const NavigationView(),
     payment: (context) => const PaymentTransactionView(),
+    profileEdit: (context) => const ProfileEditView(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -43,6 +46,10 @@ class AppRoutes {
       case payment:
         return MaterialPageRoute(
           builder: (_) => const PaymentTransactionView(),
+        );
+      case profileEdit:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileEditView(),
         );
       default:
         return MaterialPageRoute(

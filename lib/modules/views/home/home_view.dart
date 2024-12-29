@@ -63,16 +63,17 @@ class HomeView extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                profileController.profile !=
-                        null // Periksa apakah profile tidak null
+                profileController.profile != null
                     ? Text(
-                        // Jika tidak null, tampilkan nama
-                        '${profileController.profile!.firstName ?? ''} ${profileController.profile!.lastName ?? ''}',
+                        '${profileController.profile?.firstName ?? ''} ${profileController.profile?.lastName ?? ''}',
                         style: AppStyle.title4.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       )
-                    : const CircularProgressIndicator(),
+                    : const Text(
+                        'Data tidak tersedia',
+                        style: TextStyle(color: Colors.grey),
+                      ),
               ],
             ),
           ),
@@ -81,11 +82,10 @@ class HomeView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: MySaldoCard(
               currency: CurrencyFormatHelper.convertIdr(
-                    profileController.balance!.balance!,
+                    profileController.balance?.balance ?? 0,
                   ) ??
                   '0',
-              isShowCurrency:
-                  profileController.isVisibleBalance! ? false : true,
+              isShowCurrency: profileController.isVisibleBalance == true,
               showButtonSaldo: true,
               onTap: () {
                 profileController.changeVisibilityBalance();

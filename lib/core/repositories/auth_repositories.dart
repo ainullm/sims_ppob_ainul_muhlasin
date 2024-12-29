@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_ainul_muhlasin/core/constants/app_configuration.dart';
 import 'package:sims_ppob_ainul_muhlasin/shared/utils/global_context.dart';
 import 'package:sims_ppob_ainul_muhlasin/modules/controllers/profile_controller.dart';
@@ -65,10 +66,17 @@ class AuthRepositories {
   }
 
   Future<bool> saveToken(data) async {
-    String accessToken = data?['data']['token'];
-    log('Access Token: $accessToken');
-    AppStorage.saveToken(accessToken: accessToken);
+    try {
+      String accessToken = data?['data']['token'];
+      log('Access Token: $accessToken');
 
-    return true;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString(AppConfiguration.KEY_ACCESS_TOKEN, accessToken);
+
+      return true;
+    } catch (e) {
+      log('Error saving token: $e');
+      return false;
+    }
   }
 }

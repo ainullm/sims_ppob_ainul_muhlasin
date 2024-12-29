@@ -1,10 +1,18 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:developer' as dev;
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sims_ppob_ainul_muhlasin/core/constants/app_configuration.dart';
 
+import '../../../modules/controllers/navigation_controller.dart';
+import '../../../modules/controllers/profile_controller.dart';
+import '../../../modules/controllers/transaction_controller.dart';
+import '../../../routes/routes.dart';
+import '../../../shared/utils/global_context.dart';
 import '../../constants/custom_dio.dart';
 
 class DioClient {
@@ -37,53 +45,42 @@ class ApiInterceptor extends Interceptor {
       }
       var accessToken = await SharedPreferences.getInstance()
           .then((pref) => pref.getString(AppConfiguration.KEY_ACCESS_TOKEN));
+
       if (accessToken != null) {
         options.headers.putIfAbsent(
             HttpHeaders.authorizationHeader, () => 'Bearer $accessToken');
       }
+
       super.onRequest(options, handler);
     } catch (e) {
       dev.log('ApiInterceptor, error: $e');
     }
   }
 
-  // @override
-  // Future<void> onError(DioException err, ErrorInterceptorHandler handler,
-  //     BuildContext context) async {
-  //   if (err.response?.statusCode == 401) {
-  //     // Unauthorized
-  //     Navigator.pushReplacementNamed(context, AppRoutes.login);
-  //     return super.onError(err, handler);
-  //   }
+  @override
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 401) {
+      // Tangani token expired
+      log('Token expired. Redirecting to login.');
+      await _handleTokenExpired();
+      return;
+    }
 
-  //   final attempt = err.requestOptions._retryAttempt + 1;
-  //   if (attempt > retries) return super.onError(err, handler);
+    super.onError(err, handler);
+  }
 
-  //   try {
-  //     final dio = const CustomDio(AppConfiguration.devBaseUrl).create();
-  //     final pref = await SharedPreferences.getInstance();
-  //     var refreshToken = pref.get(AppConfiguration.KEY_ACCESS_TOKEN);
-  //     if (refreshToken == null) return super.onError(err, handler);
-  //     dio.options.headers['Authorization'] = 'Bearer $refreshToken';
-  //     final response = await dio.get('/auth/refresh-token');
+  Future<void> _handleTokenExpired() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(AppConfiguration.KEY_ACCESS_TOKEN);
 
-  //     if (response.statusCode == 200) {
-  //       String accessToken =
-  //           response.data?['data'][AppConfiguration.KEY_ACCESS_TOKEN];
-  //       await pref.setString(AppConfiguration.KEY_ACCESS_TOKEN, accessToken);
+    final context = GlobalContext.navigatorKey.currentContext!;
+    Provider.of<ProfileController>(context, listen: false).clearProfile();
+    Provider.of<TransactionController>(context, listen: false).clearData();
+    Provider.of<NavigationController>(context, listen: false).resetIndex();
 
-  //       final options = err.requestOptions
-  //         ..headers[HttpHeaders.authorizationHeader] = 'Bearer $accessToken';
-  //       final newResponse = await dio.fetch<void>(options);
-  //       return handler.resolve(newResponse);
-  //     }
-  //   } on DioException catch (e) {
-  //     dev.log(
-  //         'ApiInterceptor, error refresh token: ${e.response?.statusCode} ${e.response}');
-  //   }
-
-  //   super.onError(err, handler);
-  // }
+    Navigator.pushReplacementNamed(context, AppRoutes.login);
+  }
 }
 
 extension AuthRequestOptionsX on RequestOptions {

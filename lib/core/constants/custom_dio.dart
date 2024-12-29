@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
+import 'package:sims_ppob_ainul_muhlasin/core/services/dio/dio_client.dart';
 import 'package:sims_ppob_ainul_muhlasin/shared/utils/global_context.dart';
 import 'package:sims_ppob_ainul_muhlasin/routes/routes.dart';
 
@@ -17,6 +18,7 @@ class CustomDio {
 
   Dio create() {
     final dio = Dio(_createBaseOptions());
+    dio.interceptors.add(ApiInterceptor());
     if (kDebugMode) {
       dio.interceptors.add(DioLoggingInterceptor());
     }

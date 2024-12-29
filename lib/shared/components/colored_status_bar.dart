@@ -26,8 +26,10 @@ class ColoredStatusBar extends StatelessWidget {
         statusBarIconBrightness: androidIconBrightness,
         statusBarBrightness: brightness,
       ),
-      child: Container(
-        child: child,
+      child: SafeArea(
+        child: Container(
+          child: child,
+        ),
       ),
     );
   }

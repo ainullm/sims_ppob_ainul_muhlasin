@@ -1,23 +1,24 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:sims_ppob_ainul_muhlasin/core/repositories/transaction_repositories.dart';
 import 'package:sims_ppob_ainul_muhlasin/models/transaction_model.dart';
 
-
 class TransactionController extends ChangeNotifier {
   TransactionController() {
-    scrollController.addListener(onScroll);
     loadInitialTransactions();
     getAllTransaction().then((value) => notifyListeners());
+    scrollController.addListener(onScroll);
+    log('Transaction Controller Initialized');
   }
 
   final TextEditingController nominalController = TextEditingController();
   String lastFormattedValue = '';
   final ScrollController scrollController = ScrollController();
-  bool showFab = false;
+
+  bool _showFab = false;
+
+  bool get showFab => _showFab;
 
   List<Records> transactionList = [];
 
@@ -31,13 +32,13 @@ class TransactionController extends ChangeNotifier {
     if (scrollController.offset >= 100.0) {
       if (!showFab) {
         log('FAB set to true');
-        showFab = true;
+        _showFab = true;
         notifyListeners();
       }
     } else {
       if (showFab) {
         log('FAB set to false');
-        showFab = false;
+        _showFab = false;
         notifyListeners();
       }
     }
@@ -84,7 +85,6 @@ class TransactionController extends ChangeNotifier {
       final res = await TransactionRepositories().requestPayment(input);
 
       if (res != null && res.statusCode == 200) {
-        
       } else {}
     } catch (e) {
       log('Request top up failed with error: $e');
